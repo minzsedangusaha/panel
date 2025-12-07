@@ -1,0 +1,60 @@
+version: '3.8'
+services:
+  # Panel Pterodactyl
+  panel:
+    image: ghcr.io/pterodactyl/panel:latest
+    container_name: pterodactyl-panel
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - APP_URL=http://localhost
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_DATABASE=pterodactyl
+      - DB_USERNAME=pterodactyl
+      - DB_PASSWORD=password
+    volumes:
+      - ./var/www/html/storage:/var/www/html/storage
+      - ./var/www/html/public:/var/www/html/public
+    depends_on:
+      - database
+
+  # Database MySQL
+  database:
+    image: mariadb:10.5
+    container_name: pterodactyl-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: pterodactyl
+      MYSQL_USER: pterodactyl
+      MYSQL_PASSWORD: password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  # Redis
+  redis:
+    image: redis:alpine
+    container_name: pterodactyl-redis
+    restart: unless-stopped
+
+  # Wings (Game Server Daemon)
+  wings:
+    image: ghcr.io/pterodactyl/wings:latest
+    container_name: pterodactyl-wings
+    restart: unless-stopped
+    command: wings --debug
+    ports:
+      - "8080:8080"
+      - "2022:2022"
+    environment:
+      - WINGS_DEBUG=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - wings_data:/var/lib/pterodactyl
+
+volumes:
+  mariadb_data:
+  wings_data:
