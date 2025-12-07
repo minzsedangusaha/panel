@@ -1,0 +1,29 @@
+{
+  "name": "Pterodactyl Panel",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "panel",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [80, 443, 8080, 2022, 3306],
+  "portsAttributes": {
+    "80": {
+      "label": "Pterodactyl Panel",
+      "onAutoForward": "openPreview"
+    },
+    "8080": {
+      "label": "Wings API"
+    },
+    "2022": {
+      "label": "SFTP Server"
+    }
+  },
+  "postCreateCommand": "chmod +x .devcontainer/setup.sh && .devcontainer/setup.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "bmewburn.vscode-intelephense-client",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
